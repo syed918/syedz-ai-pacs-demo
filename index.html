@@ -1,27 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SYEDZ AI-PACS</title>
+
+<style>
+body{
+ font-family: Arial;
+ background:#e6ebf0;
+ margin:0;
+ padding:0;
+}
+
+.header{
+ background:#2f6fd6;
+ color:white;
+ padding:12px 15px;
+ font-size:22px;
+}
+
+.user{
+ float:right;
+ font-size:14px;
+ margin-top:4px;
+}
+
+.toolbar{
+ background:#d5dbe2;
+ padding:8px;
+ display:flex;
+ gap:6px;
+ align-items:center;
+}
+
+.toolbar input{
+ padding:4px;
+}
+
+.mod-btn{
+ background:#2f6fd6;
+ color:white;
+ border:none;
+ padding:5px 10px;
+ cursor:pointer;
+}
+
+.search-btn{
+ padding:5px 10px;
+}
+
+.table-wrap{
+ background:white;
+ margin:8px;
+ border-radius:4px;
+ overflow:hidden;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ font-size:14px;
+}
+
+th{
+ background:#2f6fd6;
+ color:white;
+ padding:7px;
+}
+
+td{
+ padding:7px;
+ border-bottom:1px solid #ddd;
+ text-align:center;
+}
+
+tr:hover{
+ background:#f2f6ff;
+}
+
+.final{color:green;font-weight:bold;}
+.unread{color:red;font-weight:bold;}
+
+.ai-btn{
+ background:#28a745;
+ color:white;
+ border:none;
+ padding:4px 10px;
+ cursor:pointer;
+}
+
+.reviewed{color:green;font-weight:bold;}
+.needs{color:red;font-weight:bold;}
+
+#result{
+ margin:8px;
+ padding:10px;
+ background:#e7f2ff;
+ border-left:5px solid #2f6fd6;
+ display:none;
+}
+
+.footer{
+ text-align:center;
+ color:#555;
+ font-size:12px;
+ padding:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+ SYEDZ AI-PACS — Demo System
+ <span class="user">User: Syed Asrar</span>
+</div>
+
+<div class="toolbar">
+ Patient ID <input>
+ Study <input>
+
+ <button class="mod-btn">ALL</button>
+ <button class="mod-btn">CT</button>
+ <button class="mod-btn">MRI</button>
+ <button class="mod-btn">XRAY</button>
+ <button class="mod-btn">US</button>
+
+ <button class="search-btn">SEARCH</button>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr>
+<th>Patient ID</th>
+<th>Modality</th>
+<th>Study</th>
+<th>Status</th>
+<th>Date</th>
+<th>AI Report</th>
+<th>Radiologist Reviewed</th>
+<th>Needs Reporting</th>
+</tr>
+
+<tr>
+<td>PT-001</td>
+<td>XRAY</td>
+<td>Chest PA</td>
+<td class="final">FINAL</td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-001','Chest PA X-ray')">Generate AI</button></td>
+<td>No</td>
+<td class="needs">Yes</td>
+</tr>
+
+<tr>
+<td>PT-002</td>
+<td>CT</td>
+<td>Abdomen Plain</td>
+<td class="unread">UNREAD</td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-002','CT Abdomen')">Generate AI</button></td>
+<td>No</td>
+<td class="needs">Yes</td>
+</tr>
+
+<tr>
+<td>PT-003</td>
+<td>MRI</td>
+<td>Brain Screening</td>
+<td class="final">FINAL</td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-003','MRI Brain')">Generate AI</button></td>
+<td>No</td>
+<td class="needs">Yes</td>
+</tr>
+
+<tr>
+<td>PT-004</td>
+<td>XRAY</td>
+<td>Pelvis AP</td>
+<td class="unread">UNREAD</td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-004','Pelvis X-ray')">Generate AI</button></td>
+<td>No</td>
+<td class="needs">Yes</td>
+</tr>
+
+</table>
+</div>
+
+<div id="result"></div>
+
+<div class="footer">
+© 2026 SYEDZ AI-PACS — Demo Version
+</div>
+
 <script>
 function runAI(btn,id,study){
 
-// Show bottom result bar
+// Bottom result bar
 document.getElementById("result").style.display="block";
 document.getElementById("result").innerHTML =
-"AI analysis completed for "+id+" — No critical abnormality detected (Demo).";
+"AI analysis completed for " + id + " — No critical abnormality detected (Demo).";
 
-// Update workflow columns
+// Update workflow
 let row = btn.parentElement.parentElement;
-row.cells[6].innerHTML = "<span style='color:green;font-weight:bold;'>Yes</span>";
+row.cells[6].innerHTML = "<span class='reviewed'>Yes</span>";
 row.cells[7].innerHTML = "No";
 
-// ===== PDF Generation (clean medical format) =====
+// Open printable PDF-style report
+let win = window.open("", "_blank");
 
-let reportWindow = window.open("", "_blank");
-
-reportWindow.document.write(`
+win.document.write(`
 <html>
 <head>
 <title>AI Report</title>
 <style>
 body{font-family:Arial;padding:40px;}
-h2{color:#2b6edb;margin-bottom:20px;}
+h2{color:#2f6fd6;}
 .section{margin:10px 0;}
 hr{margin:20px 0;}
 </style>
@@ -32,25 +227,18 @@ hr{margin:20px 0;}
 
 <div class="section"><b>Patient ID:</b> ${id}</div>
 <div class="section"><b>Study:</b> ${study}</div>
-<div class="section"><b>Status:</b> AI Completed</div>
 
 <hr>
 
 <div class="section"><b>Findings:</b></div>
-<div class="section">
-No radiographically significant abnormality detected.
-Lung fields appear clear. Cardiomediastinal silhouette within normal limits.
-</div>
+<div class="section">No significant abnormality detected.</div>
 
 <div class="section"><b>Impression:</b></div>
-<div class="section">
-No acute pathology detected.
-</div>
+<div class="section">Normal study.</div>
 
 <hr>
 
-<div class="section"><b>AI Confidence:</b> 96%</div>
-<div class="section"><b>Reviewed By:</b> Syed Asrar</div>
+<div class="section"><b>Reviewed by:</b> Syed Asrar</div>
 <div class="section"><b>Date:</b> ${new Date().toLocaleString()}</div>
 
 <script>
@@ -61,6 +249,9 @@ window.print();
 </html>
 `);
 
-reportWindow.document.close();
+win.document.close();
 }
 </script>
+
+</body>
+</html>

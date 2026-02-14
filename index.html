@@ -3,8 +3,6 @@
 <head>
 <title>SYEDZ AI-PACS</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
 body{
  font-family: Arial;
@@ -26,6 +24,7 @@ body{
 .grid{
  background:white;
  border-radius:5px;
+ margin-top:10px;
 }
 table{
  width:100%;
@@ -46,7 +45,7 @@ td{
  background:#28a745;
  color:white;
  border:none;
- padding:4px 8px;
+ padding:6px 10px;
  cursor:pointer;
 }
 </style>
@@ -65,49 +64,65 @@ td{
 <th>Patient ID</th>
 <th>Modality</th>
 <th>Study</th>
-<th>AI Report</th>
+<th>Generate Report</th>
 </tr>
 
 <tr>
 <td>PT-001</td>
 <td>XRAY</td>
 <td>Chest PA</td>
-<td><button class="ai-btn" onclick="generatePDF('PT-001','Chest PA X-ray')">Generate AI PDF</button></td>
+<td><button class="ai-btn" onclick="generateReport('PT-001','Chest PA X-ray')">Generate AI PDF</button></td>
 </tr>
 
 <tr>
 <td>PT-002</td>
 <td>CT</td>
 <td>Abdomen</td>
-<td><button class="ai-btn" onclick="generatePDF('PT-002','CT Abdomen')">Generate AI PDF</button></td>
+<td><button class="ai-btn" onclick="generateReport('PT-002','CT Abdomen')">Generate AI PDF</button></td>
 </tr>
 
 </table>
 </div>
 
 <script>
-function generatePDF(id, study) {
+function generateReport(id, study){
 
-  if (!window.jspdf) {
-    alert("PDF library not loaded. Refresh page once.");
-    return;
-  }
+let reportWindow = window.open("", "_blank");
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+reportWindow.document.write(`
+<html>
+<head>
+<title>AI Report</title>
+<style>
+body{font-family:Arial;padding:30px;}
+h2{color:#2b6edb;}
+.line{margin:8px 0;}
+</style>
+</head>
+<body>
 
-  doc.setFontSize(16);
-  doc.text("SYEDZ AI-PACS REPORT", 20, 20);
+<h2>SYEDZ AI-PACS REPORT</h2>
 
-  doc.setFontSize(12);
-  doc.text("Patient ID: " + id, 20, 40);
-  doc.text("Study: " + study, 20, 50);
-  doc.text("AI Result: No critical abnormality detected.", 20, 60);
-  doc.text("Confidence: 96%", 20, 70);
-  doc.text("Radiologist: Syed Asrar", 20, 80);
-  doc.text("Generated Date: " + new Date().toLocaleString(), 20, 90);
+<div class="line"><b>Patient ID:</b> ${id}</div>
+<div class="line"><b>Study:</b> ${study}</div>
+<div class="line"><b>AI Result:</b> No critical abnormality detected</div>
+<div class="line"><b>Confidence:</b> 96%</div>
+<div class="line"><b>Reviewed by:</b> Syed Asrar</div>
+<div class="line"><b>Date:</b> ${new Date().toLocaleString()}</div>
 
-  doc.save(id + "_AI_Report.pdf");
+<hr>
+
+<p>Demo AI-generated radiology report for workflow presentation.</p>
+
+<script>
+window.print();
+<\/script>
+
+</body>
+</html>
+`);
+
+reportWindow.document.close();
 }
 </script>
 

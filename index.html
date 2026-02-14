@@ -11,16 +11,30 @@ body{
  padding:10px;
 }
 
-.topbar{
- background:#cfd6de;
- padding:8px;
+.header{
+ background:#2b6edb;
+ color:white;
+ padding:10px;
+ font-size:22px;
  border-radius:5px;
- margin-bottom:10px;
 }
 
-.filter input, .filter select, .filter button{
- padding:5px;
- margin:2px;
+.user{
+ float:right;
+ font-size:14px;
+ margin-top:4px;
+}
+
+.topbar{
+ background:#cfd6de;
+ padding:6px;
+ margin:8px 0;
+ border-radius:5px;
+}
+
+.filter input{
+ padding:4px;
+ margin-right:5px;
 }
 
 .mod-btn{
@@ -53,6 +67,7 @@ th{
 td{
  padding:6px;
  border-bottom:1px solid #ddd;
+ text-align:center;
 }
 
 tr:hover{background:#f1f6ff;}
@@ -68,6 +83,9 @@ tr:hover{background:#f1f6ff;}
  cursor:pointer;
 }
 
+.reviewed{color:#1a8f3a;font-weight:bold;}
+.needs{color:#d62828;font-weight:bold;}
+
 #result{
  margin-top:10px;
  padding:10px;
@@ -75,12 +93,24 @@ tr:hover{background:#f1f6ff;}
  display:none;
  border-left:5px solid #2b6edb;
 }
+
+.footer{
+ text-align:center;
+ margin-top:10px;
+ color:#555;
+ font-size:12px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="topbar filter">
+<div class="header">
+ SYEDZ AI-PACS — Demo System
+ <span class="user">User: Syed Asrar</span>
+</div>
+
+<div class="topbar">
  Patient ID <input>
  Study <input>
 
@@ -100,8 +130,10 @@ tr:hover{background:#f1f6ff;}
 <th>Modality</th>
 <th>Study</th>
 <th>Status</th>
-<th>Upload</th>
-<th>AI</th>
+<th>Date</th>
+<th>AI Report</th>
+<th>Radiologist Reviewed</th>
+<th>Needs Reporting</th>
 </tr>
 
 <tr>
@@ -110,34 +142,42 @@ tr:hover{background:#f1f6ff;}
 <td>Chest PA</td>
 <td class="status-final">FINAL</td>
 <td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI('PT-001')">Generate AI</button></td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-001')">Generate AI</button></td>
+<td class="reviewed">Yes</td>
+<td>No</td>
 </tr>
 
 <tr>
 <td>PT-002</td>
 <td>CT</td>
-<td>Abdomen</td>
+<td>Abdomen Plain</td>
 <td class="status-unread">UNREAD</td>
 <td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI('PT-002')">Generate AI</button></td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-002')">Generate AI</button></td>
+<td>No</td>
+<td class="needs">Yes</td>
 </tr>
 
 <tr>
 <td>PT-003</td>
 <td>MRI</td>
-<td>Brain</td>
+<td>Brain Screening</td>
 <td class="status-final">FINAL</td>
 <td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI('PT-003')">Generate AI</button></td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-003')">Generate AI</button></td>
+<td class="reviewed">Yes</td>
+<td>No</td>
 </tr>
 
 <tr>
 <td>PT-004</td>
 <td>XRAY</td>
-<td>Pelvis</td>
+<td>Pelvis AP</td>
 <td class="status-unread">UNREAD</td>
 <td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI('PT-004')">Generate AI</button></td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-004')">Generate AI</button></td>
+<td>No</td>
+<td class="needs">Yes</td>
 </tr>
 
 </table>
@@ -145,11 +185,20 @@ tr:hover{background:#f1f6ff;}
 
 <div id="result"></div>
 
+<div class="footer">
+ © 2026 SYEDZ AI-PACS — Demo Version
+</div>
+
 <script>
-function runAI(id){
+function runAI(btn,id){
  document.getElementById("result").style.display="block";
  document.getElementById("result").innerHTML =
  "AI analysis completed for "+id+" — No critical abnormality detected (Demo).";
+
+ // auto update workflow columns
+ let row = btn.parentElement.parentElement;
+ row.cells[6].innerHTML = "<span class='reviewed'>Yes</span>";
+ row.cells[7].innerHTML = "No";
 }
 </script>
 

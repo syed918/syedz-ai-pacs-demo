@@ -2,114 +2,142 @@
 <html>
 <head>
 <title>SYEDZ AI-PACS</title>
+
 <style>
 body{
- font-family:Segoe UI,Arial;
- background:#0f2a44;
- padding:15px;
+ font-family: Arial;
+ background:#dfe5ec;
+ margin:0;
+ padding:10px;
 }
-.header{
- background:#163f6b;
+
+.topbar{
+ background:#cfd6de;
+ padding:8px;
+ border-radius:5px;
+ margin-bottom:10px;
+}
+
+.filter input, .filter select, .filter button{
+ padding:5px;
+ margin:2px;
+}
+
+.mod-btn{
+ background:#2b6edb;
  color:white;
- padding:12px;
- font-size:22px;
- border-radius:6px;
- margin-bottom:12px;
+ border:none;
+ padding:5px 10px;
+ margin:2px;
+ cursor:pointer;
 }
-.pacs-box{
+
+.grid{
  background:white;
- border-radius:6px;
+ border-radius:5px;
  overflow:hidden;
- box-shadow:0 4px 10px rgba(0,0,0,.3);
 }
+
 table{
  width:100%;
  border-collapse:collapse;
- font-size:14px;
+ font-size:13px;
 }
+
 th{
- background:#1f6fe5;
+ background:#2b6edb;
  color:white;
- padding:10px;
+ padding:6px;
 }
+
 td{
- padding:9px;
+ padding:6px;
  border-bottom:1px solid #ddd;
 }
-tr:hover{
- background:#e9f1ff;
-}
-.status-final{color:#1a8f3a;font-weight:bold;}
-.status-unread{color:#d62828;font-weight:bold;}
-.status-draft{color:#f59e0b;font-weight:bold;}
-button{
- background:#1f6fe5;
- border:none;
- padding:6px 12px;
+
+tr:hover{background:#f1f6ff;}
+
+.status-final{color:green;font-weight:bold;}
+.status-unread{color:red;font-weight:bold;}
+
+.ai-btn{
+ background:#28a745;
  color:white;
- border-radius:4px;
+ border:none;
+ padding:4px 8px;
  cursor:pointer;
 }
-button:hover{background:#155bd6;}
+
 #result{
- margin-top:12px;
+ margin-top:10px;
  padding:10px;
  background:#e6f2ff;
- border-left:5px solid #1f6fe5;
  display:none;
-}
-.topbar{
- color:#cfe4ff;
- margin-bottom:8px;
+ border-left:5px solid #2b6edb;
 }
 </style>
 </head>
+
 <body>
 
-<div class="header">SYEDZ AI-PACS — Demo System</div>
+<div class="topbar filter">
+ Patient ID <input>
+ Study <input>
 
-<div class="topbar">Patient List • All Modalities • Today</div>
+ <button class="mod-btn">ALL</button>
+ <button class="mod-btn">CT</button>
+ <button class="mod-btn">MRI</button>
+ <button class="mod-btn">XRAY</button>
+ <button class="mod-btn">US</button>
 
-<div class="pacs-box">
+ <button>SEARCH</button>
+</div>
+
+<div class="grid">
 <table>
 <tr>
 <th>Patient ID</th>
 <th>Modality</th>
 <th>Study</th>
 <th>Status</th>
-<th>AI Report</th>
+<th>Upload</th>
+<th>AI</th>
 </tr>
 
 <tr>
 <td>PT-001</td>
-<td>X-Ray</td>
+<td>XRAY</td>
 <td>Chest PA</td>
 <td class="status-final">FINAL</td>
-<td><button onclick="runAI('PT-001')">Generate AI</button></td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI('PT-001')">Generate AI</button></td>
 </tr>
 
 <tr>
 <td>PT-002</td>
 <td>CT</td>
-<td>Abdomen Plain</td>
+<td>Abdomen</td>
 <td class="status-unread">UNREAD</td>
-<td><button onclick="runAI('PT-002')">Generate AI</button></td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI('PT-002')">Generate AI</button></td>
 </tr>
 
 <tr>
 <td>PT-003</td>
 <td>MRI</td>
-<td>Brain Screening</td>
-<td class="status-draft">DRAFT</td>
-<td><button onclick="runAI('PT-003')">Generate AI</button></td>
+<td>Brain</td>
+<td class="status-final">FINAL</td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI('PT-003')">Generate AI</button></td>
 </tr>
 
 <tr>
 <td>PT-004</td>
-<td>X-Ray</td>
-<td>Pelvis AP</td>
-<td class="status-final">FINAL</td>
-<td><button onclick="runAI('PT-004')">Generate AI</button></td>
+<td>XRAY</td>
+<td>Pelvis</td>
+<td class="status-unread">UNREAD</td>
+<td>13-02-26</td>
+<td><button class="ai-btn" onclick="runAI('PT-004')">Generate AI</button></td>
 </tr>
 
 </table>
@@ -121,8 +149,7 @@ button:hover{background:#155bd6;}
 function runAI(id){
  document.getElementById("result").style.display="block";
  document.getElementById("result").innerHTML =
- "AI analysis completed for " + id +
- ". Confidence: 96%. No critical abnormality detected.";
+ "AI analysis completed for "+id+" — No critical abnormality detected (Demo).";
 }
 </script>
 

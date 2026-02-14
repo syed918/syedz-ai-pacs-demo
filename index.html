@@ -12,7 +12,6 @@ body{
  margin:0;
  padding:10px;
 }
-
 .header{
  background:#2b6edb;
  color:white;
@@ -20,73 +19,35 @@ body{
  font-size:22px;
  border-radius:5px;
 }
-
 .user{
  float:right;
  font-size:14px;
 }
-
-.topbar{
- background:#cfd6de;
- padding:6px;
- margin:8px 0;
- border-radius:5px;
-}
-
-.mod-btn{
- background:#2b6edb;
- color:white;
- border:none;
- padding:5px 10px;
- margin:2px;
-}
-
 .grid{
  background:white;
  border-radius:5px;
 }
-
 table{
  width:100%;
  border-collapse:collapse;
  font-size:13px;
 }
-
 th{
  background:#2b6edb;
  color:white;
  padding:6px;
 }
-
 td{
  padding:6px;
  border-bottom:1px solid #ddd;
  text-align:center;
 }
-
 .ai-btn{
  background:#28a745;
  color:white;
  border:none;
  padding:4px 8px;
  cursor:pointer;
-}
-
-.reviewed{color:green;font-weight:bold;}
-.needs{color:red;font-weight:bold;}
-
-#result{
- margin-top:10px;
- padding:10px;
- background:#e6f2ff;
- display:none;
- border-left:5px solid #2b6edb;
-}
-
-.footer{
- text-align:center;
- margin-top:10px;
- font-size:12px;
 }
 </style>
 </head>
@@ -98,86 +59,55 @@ td{
  <span class="user">User: Syed Asrar</span>
 </div>
 
-<div class="topbar">
-<button class="mod-btn">ALL</button>
-<button class="mod-btn">CT</button>
-<button class="mod-btn">MRI</button>
-<button class="mod-btn">XRAY</button>
-</div>
-
 <div class="grid">
 <table>
 <tr>
 <th>Patient ID</th>
 <th>Modality</th>
 <th>Study</th>
-<th>Status</th>
 <th>AI Report</th>
-<th>Reviewed</th>
-<th>Needs Reporting</th>
 </tr>
 
 <tr>
 <td>PT-001</td>
 <td>XRAY</td>
 <td>Chest PA</td>
-<td>FINAL</td>
-<td><button class="ai-btn" onclick="runAI(this,'PT-001','Chest PA X-ray')">Generate AI</button></td>
-<td>No</td>
-<td>Yes</td>
+<td><button class="ai-btn" onclick="generatePDF('PT-001','Chest PA X-ray')">Generate AI PDF</button></td>
 </tr>
 
 <tr>
 <td>PT-002</td>
 <td>CT</td>
 <td>Abdomen</td>
-<td>UNREAD</td>
-<td><button class="ai-btn" onclick="runAI(this,'PT-002','CT Abdomen')">Generate AI</button></td>
-<td>No</td>
-<td>Yes</td>
+<td><button class="ai-btn" onclick="generatePDF('PT-002','CT Abdomen')">Generate AI PDF</button></td>
 </tr>
 
 </table>
 </div>
 
-<div id="result"></div>
-
-<div class="footer">
-© 2026 SYEDZ AI-PACS — Demo Version
-</div>
-
 <script>
-const { jsPDF } = window.jspdf;
+function generatePDF(id, study) {
 
-function runAI(btn,id,study){
+  if (!window.jspdf) {
+    alert("PDF library not loaded. Refresh page once.");
+    return;
+  }
 
-let reportText = `
-SYEDZ AI-PACS REPORT
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
 
-Patient ID: ${id}
-Study: ${study}
-AI Result: No critical abnormality detected.
-Confidence: 96%
+  doc.setFontSize(16);
+  doc.text("SYEDZ AI-PACS REPORT", 20, 20);
 
-Reviewed by Radiologist: Yes
-Recommendation: Routine follow-up
+  doc.setFontSize(12);
+  doc.text("Patient ID: " + id, 20, 40);
+  doc.text("Study: " + study, 20, 50);
+  doc.text("AI Result: No critical abnormality detected.", 20, 60);
+  doc.text("Confidence: 96%", 20, 70);
+  doc.text("Radiologist: Syed Asrar", 20, 80);
+  doc.text("Generated Date: " + new Date().toLocaleString(), 20, 90);
 
---- Demo Report ---
-`;
-
-document.getElementById("result").style.display="block";
-document.getElementById("result").innerHTML =
-"AI Report generated for "+id+" — Downloading PDF...";
-
-// Update workflow columns
-let row = btn.parentElement.parentElement;
-row.cells[5].innerHTML = "<span class='reviewed'>Yes</span>";
-row.cells[6].innerHTML = "No";
-
-// Create PDF
-let pdf = new jsPDF();
-pdf.text(reportText, 10, 10);
-pdf.save(id + "_AI_Report.pdf");
+  doc.save(id + "_AI_Report.pdf");
 }
 </script>
 

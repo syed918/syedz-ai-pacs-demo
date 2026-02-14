@@ -3,6 +3,8 @@
 <head>
 <title>SYEDZ AI-PACS</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 body{
  font-family: Arial;
@@ -22,7 +24,6 @@ body{
 .user{
  float:right;
  font-size:14px;
- margin-top:4px;
 }
 
 .topbar{
@@ -32,24 +33,17 @@ body{
  border-radius:5px;
 }
 
-.filter input{
- padding:4px;
- margin-right:5px;
-}
-
 .mod-btn{
  background:#2b6edb;
  color:white;
  border:none;
  padding:5px 10px;
  margin:2px;
- cursor:pointer;
 }
 
 .grid{
  background:white;
  border-radius:5px;
- overflow:hidden;
 }
 
 table{
@@ -70,11 +64,6 @@ td{
  text-align:center;
 }
 
-tr:hover{background:#f1f6ff;}
-
-.status-final{color:green;font-weight:bold;}
-.status-unread{color:red;font-weight:bold;}
-
 .ai-btn{
  background:#28a745;
  color:white;
@@ -83,8 +72,8 @@ tr:hover{background:#f1f6ff;}
  cursor:pointer;
 }
 
-.reviewed{color:#1a8f3a;font-weight:bold;}
-.needs{color:#d62828;font-weight:bold;}
+.reviewed{color:green;font-weight:bold;}
+.needs{color:red;font-weight:bold;}
 
 #result{
  margin-top:10px;
@@ -97,7 +86,6 @@ tr:hover{background:#f1f6ff;}
 .footer{
  text-align:center;
  margin-top:10px;
- color:#555;
  font-size:12px;
 }
 </style>
@@ -111,16 +99,10 @@ tr:hover{background:#f1f6ff;}
 </div>
 
 <div class="topbar">
- Patient ID <input>
- Study <input>
-
- <button class="mod-btn">ALL</button>
- <button class="mod-btn">CT</button>
- <button class="mod-btn">MRI</button>
- <button class="mod-btn">XRAY</button>
- <button class="mod-btn">US</button>
-
- <button>SEARCH</button>
+<button class="mod-btn">ALL</button>
+<button class="mod-btn">CT</button>
+<button class="mod-btn">MRI</button>
+<button class="mod-btn">XRAY</button>
 </div>
 
 <div class="grid">
@@ -130,9 +112,8 @@ tr:hover{background:#f1f6ff;}
 <th>Modality</th>
 <th>Study</th>
 <th>Status</th>
-<th>Date</th>
 <th>AI Report</th>
-<th>Radiologist Reviewed</th>
+<th>Reviewed</th>
 <th>Needs Reporting</th>
 </tr>
 
@@ -140,44 +121,20 @@ tr:hover{background:#f1f6ff;}
 <td>PT-001</td>
 <td>XRAY</td>
 <td>Chest PA</td>
-<td class="status-final">FINAL</td>
-<td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI(this,'PT-001')">Generate AI</button></td>
-<td class="reviewed">Yes</td>
+<td>FINAL</td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-001','Chest PA X-ray')">Generate AI</button></td>
 <td>No</td>
+<td>Yes</td>
 </tr>
 
 <tr>
 <td>PT-002</td>
 <td>CT</td>
-<td>Abdomen Plain</td>
-<td class="status-unread">UNREAD</td>
-<td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI(this,'PT-002')">Generate AI</button></td>
+<td>Abdomen</td>
+<td>UNREAD</td>
+<td><button class="ai-btn" onclick="runAI(this,'PT-002','CT Abdomen')">Generate AI</button></td>
 <td>No</td>
-<td class="needs">Yes</td>
-</tr>
-
-<tr>
-<td>PT-003</td>
-<td>MRI</td>
-<td>Brain Screening</td>
-<td class="status-final">FINAL</td>
-<td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI(this,'PT-003')">Generate AI</button></td>
-<td class="reviewed">Yes</td>
-<td>No</td>
-</tr>
-
-<tr>
-<td>PT-004</td>
-<td>XRAY</td>
-<td>Pelvis AP</td>
-<td class="status-unread">UNREAD</td>
-<td>13-02-26</td>
-<td><button class="ai-btn" onclick="runAI(this,'PT-004')">Generate AI</button></td>
-<td>No</td>
-<td class="needs">Yes</td>
+<td>Yes</td>
 </tr>
 
 </table>
@@ -186,19 +143,41 @@ tr:hover{background:#f1f6ff;}
 <div id="result"></div>
 
 <div class="footer">
- © 2026 SYEDZ AI-PACS — Demo Version
+© 2026 SYEDZ AI-PACS — Demo Version
 </div>
 
 <script>
-function runAI(btn,id){
- document.getElementById("result").style.display="block";
- document.getElementById("result").innerHTML =
- "AI analysis completed for "+id+" — No critical abnormality detected (Demo).";
+const { jsPDF } = window.jspdf;
 
- // auto update workflow columns
- let row = btn.parentElement.parentElement;
- row.cells[6].innerHTML = "<span class='reviewed'>Yes</span>";
- row.cells[7].innerHTML = "No";
+function runAI(btn,id,study){
+
+let reportText = `
+SYEDZ AI-PACS REPORT
+
+Patient ID: ${id}
+Study: ${study}
+AI Result: No critical abnormality detected.
+Confidence: 96%
+
+Reviewed by Radiologist: Yes
+Recommendation: Routine follow-up
+
+--- Demo Report ---
+`;
+
+document.getElementById("result").style.display="block";
+document.getElementById("result").innerHTML =
+"AI Report generated for "+id+" — Downloading PDF...";
+
+// Update workflow columns
+let row = btn.parentElement.parentElement;
+row.cells[5].innerHTML = "<span class='reviewed'>Yes</span>";
+row.cells[6].innerHTML = "No";
+
+// Create PDF
+let pdf = new jsPDF();
+pdf.text(reportText, 10, 10);
+pdf.save(id + "_AI_Report.pdf");
 }
 </script>
 

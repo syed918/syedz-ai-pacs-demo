@@ -126,6 +126,8 @@ tr:hover{
  <button class="mod-btn">US</button>
 
  <button class="search-btn">SEARCH</button>
+ <input type="file" id="xrayUpload" accept="image/*">
+<button class="search-btn" onclick="sendToAI()">Analyze X-ray</button>
 </div>
 
 <div class="table-wrap">
@@ -252,6 +254,26 @@ window.print();
 win.document.close();
 }
 </script>
+<script>
+async function sendToAI() {
+    const file = document.getElementById("xrayUpload").files[0];
 
+    if (!file) {
+        alert("Please upload an X-ray image first");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("https://syedasrar-syedz-ai-backend.hf.space/predict", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+    alert("AI Result: " + JSON.stringify(result));
+}
+</script>
 </body>
 </html>

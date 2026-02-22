@@ -50,12 +50,18 @@ const payload={
   data:[base64]
 };
 
+const formData = new FormData();
+formData.append("image", file);
+
 const res = await fetch(
-  "https://syedasrar-syedz-ai-backend.hf.space/predict",
+  "https://syedasrar-syedz-ai-backend.hf.space/api/predict",
   {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(payload)
+    method: "POST",
+    body: formData
+  }
+);
+
+const data = await res.json();
   }
 );
 

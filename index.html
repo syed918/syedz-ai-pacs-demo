@@ -1,34 +1,60 @@
 <!DOCTYPE html>
 <html>
+<head>
+<title>SYEDZ AI-PACS</title>
+
+<style>
+body{font-family:Arial;background:#e6ebf0;margin:0}
+.header{background:#2f6fd6;color:white;padding:12px;font-size:22px}
+.toolbar{background:#d5dbe2;padding:8px}
+button{padding:6px;margin:2px}
+table{width:100%;border-collapse:collapse;background:white;margin:10px}
+th{background:#2f6fd6;color:white;padding:6px}
+td{padding:6px;border:1px solid #ddd;text-align:center}
+.ai-btn{background:#28a745;color:white;border:none}
+#result{margin:10px;padding:10px;background:#e7f2ff}
+</style>
+</head>
+
 <body>
-<h2>SYEDZ AI PACS</h2>
 
-<input type="file" id="f">
-<button onclick="run()">Analyze</button>
+<div class="header">SYEDZ AI-PACS</div>
 
-<pre id="out"></pre>
+<div class="toolbar">
+<input type="file" id="xrayUpload">
+<button onclick="sendToAI()">Analyze X-ray</button>
+</div>
+
+<table>
+<tr>
+<th>Patient</th><th>Modality</th><th>Study</th><th>AI</th>
+</tr>
+<tr>
+<td>PT-001</td><td>XRAY</td><td>Chest PA</td>
+<td><button class="ai-btn" onclick="sendToAI()">Generate AI</button></td>
+</tr>
+</table>
+
+<div id="result"></div>
 
 <script>
-async function run(){
- const file=document.getElementById("f").files[0];
- if(!file) return alert("Upload image");
+async function sendToAI(){
+const file=document.getElementById("xrayUpload").files[0];
+if(!file){alert("Upload X-ray first");return;}
 
- const r=new FileReader();
- r.onload=async()=>{
-  const res=await fetch(
-   "https://syedasrar-syedz-ai-backend.hf.space/run/predict",
-   {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({data:[r.result]})
-   }
-  );
-  const j=await res.json();
-  document.getElementById("out").textContent=
-   JSON.stringify(j.data[0],null,2);
- };
- r.readAsDataURL(file);
+const formData=new FormData();
+formData.append("file",file);
+
+const res=await fetch("https://syedasrar-syedz-ai-backend.hf.space/predict",{
+method:"POST",
+body:formData
+});
+
+const data=await res.json();
+document.getElementById("result").innerHTML=
+"<b>AI Result:</b><br>"+JSON.stringify(data,null,2);
 }
 </script>
+
 </body>
 </html>

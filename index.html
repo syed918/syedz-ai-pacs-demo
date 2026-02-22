@@ -2,16 +2,16 @@
 <html>
 <head>
 <title>SYEDZ AI-PACS</title>
+
 <style>
-body{font-family:Arial;background:#eef3f7;margin:0}
+body{font-family:Arial;background:#e6ebf0;margin:0}
 .header{background:#2f6fd6;color:white;padding:12px;font-size:22px}
-.toolbar{background:#d9e1ea;padding:8px}
-table{width:100%;border-collapse:collapse;background:white;margin-top:10px}
-th{background:#2f6fd6;color:white;padding:8px}
-td{border:1px solid #ddd;padding:8px;text-align:center}
-button{padding:6px 10px}
-#result{margin:10px;padding:12px;background:#e9f3ff;font-size:16px}
-.ai-btn{background:#28a745;color:white;border:none}
+.toolbar{background:#d5dbe2;padding:8px}
+table{width:100%;border-collapse:collapse;background:white;margin:10px}
+th{background:#2f6fd6;color:white;padding:6px}
+td{padding:6px;border:1px solid #ddd;text-align:center}
+#result{margin:10px;padding:10px;background:#e7f2ff}
+button{padding:6px}
 </style>
 </head>
 
@@ -20,7 +20,7 @@ button{padding:6px 10px}
 <div class="header">SYEDZ AI-PACS</div>
 
 <div class="toolbar">
-<input type="file" id="xrayFile">
+<input type="file" id="file">
 <button onclick="analyze()">Analyze X-ray</button>
 </div>
 
@@ -35,7 +35,7 @@ button{padding:6px 10px}
 <td>PT-001</td>
 <td>XRAY</td>
 <td>Chest PA</td>
-<td><button class="ai-btn" onclick="analyze()">Generate AI</button></td>
+<td><button>Generate AI</button></td>
 </tr>
 </table>
 
@@ -44,44 +44,39 @@ button{padding:6px 10px}
 <script>
 async function analyze(){
 
-const file=document.getElementById("xrayFile").files[0];
-if(!file){
-alert("Please select X-ray image");
-return;
+const fileInput = document.getElementById("file");
+const resultBox = document.getElementById("result");
+
+if(!fileInput.files[0]){
+ alert("Select X-ray image first");
+ return;
 }
 
 const formData = new FormData();
-formData.append("image", file);
+formData.append("data", fileInput.files[0]);
 
-const res = await fetch(
-  "https://syedasrar-syedz-ai-backend.hf.space/predict",
-  {
-    method: "POST",
-    body: formData
-  }
-);
+resultBox.innerHTML="Running AI model...";
 
-const data = await res.json();
+try{
+ const res = await fetch(
+ "https://syedasrar-syedz-ai-backend.hf.space/run/predict",
+ { method:"POST", body: formData }
+ );
 
-let output = "<b>AI Pathology Probabilities:</b><br><br>";
-for (let key in data) {
-  output += `${key}: ${(data[key] * 100).toFixed(1)}%<br>`;
+ const json = await res.json();
+ const preds = json.data[0];
+
+ let out="<b>AI Pathology Probabilities:</b><br><br>";
+
+ for(let k in preds){
+   out += k + " : " + (preds[k]*100).toFixed(1) + "%<br>";
+ }
+
+ resultBox.innerHTML=out;
+
+}catch(e){
+ resultBox.innerHTML="AI backend error — check Space running.";
 }
-
-resultBox.innerHTML = output;
-}
-
-if(!output.includes("%")){
-output="AI returned no valid prediction.";
-}
-
-document.getElementById("result").innerHTML=output;
-
-}
-catch(err){
-document.getElementById("result").innerHTML="AI backend error. Check if backend Space is running.";
-}
-
 }
 </script>
 

@@ -2,33 +2,102 @@
 <html>
 <head>
 <title>SYEDZ AI-PACS</title>
+
 <style>
-body{font-family:Arial;background:#e6ebf0;margin:0}
-.header{background:#2f6fd6;color:white;padding:12px;font-size:22px}
-.toolbar{background:#d5dbe2;padding:8px;display:flex;gap:6px}
-.mod-btn{background:#2f6fd6;color:white;border:none;padding:5px}
-.table-wrap{background:white;margin:10px}
-table{width:100%;border-collapse:collapse}
-th{background:#2f6fd6;color:white;padding:6px}
-td{padding:6px;border-bottom:1px solid #ccc;text-align:center}
-.ai-btn{background:#28a745;color:white;border:none;padding:5px}
+body{
+ font-family: Arial;
+ background:#e6ebf0;
+ margin:0;
+ padding:0;
+}
+.header{
+ background:#2f6fd6;
+ color:white;
+ padding:12px 15px;
+ font-size:22px;
+}
+.user{
+ float:right;
+ font-size:14px;
+ margin-top:4px;
+}
+.toolbar{
+ background:#d5dbe2;
+ padding:8px;
+ display:flex;
+ gap:6px;
+ align-items:center;
+ flex-wrap:wrap;
+}
+.mod-btn{
+ background:#2f6fd6;
+ color:white;
+ border:none;
+ padding:5px 10px;
+ cursor:pointer;
+}
+.table-wrap{
+ background:white;
+ margin:8px;
+ border-radius:4px;
+ overflow:hidden;
+}
+table{
+ width:100%;
+ border-collapse:collapse;
+}
+th{
+ background:#2f6fd6;
+ color:white;
+ padding:7px;
+}
+td{
+ padding:7px;
+ border-bottom:1px solid #ddd;
+ text-align:center;
+}
+.ai-btn{
+ background:#28a745;
+ color:white;
+ border:none;
+ padding:5px 12px;
+ cursor:pointer;
+}
+#result{
+ margin:10px;
+ padding:10px;
+ background:#e7f2ff;
+ border-left:5px solid #2f6fd6;
+ display:none;
+}
+.footer{
+ text-align:center;
+ color:#555;
+ font-size:12px;
+ padding:8px;
+}
 </style>
 </head>
+
 <body>
 
-<div class="header">SYEDZ AI-PACS</div>
+<div class="header">
+ SYEDZ AI-PACS — Demo System
+ <span class="user">User: Syed Asrar</span>
+</div>
 
 <div class="toolbar">
-<button class="mod-btn">ALL</button>
-<button class="mod-btn">CT</button>
-<button class="mod-btn">MRI</button>
-<button class="mod-btn">XRAY</button>
+ <button class="mod-btn">ALL</button>
+ <button class="mod-btn">CT</button>
+ <button class="mod-btn">MRI</button>
+ <button class="mod-btn">XRAY</button>
+ <button class="mod-btn">US</button>
 </div>
 
 <div class="table-wrap">
 <table>
 <tr>
-<th>Patient</th>
+<th>Patient ID</th>
 <th>Modality</th>
 <th>Study</th>
 <th>AI</th>
@@ -38,10 +107,39 @@ td{padding:6px;border-bottom:1px solid #ccc;text-align:center}
 <td>PT-001</td>
 <td>XRAY</td>
 <td>Chest PA</td>
-<td><button class="ai-btn">Generate AI</button></td>
+<td><button class="ai-btn" onclick="runAI('PT-001','Chest PA')">Generate AI</button></td>
 </tr>
+
+<tr>
+<td>PT-002</td>
+<td>CT</td>
+<td>Abdomen Plain</td>
+<td><button class="ai-btn" onclick="runAI('PT-002','CT Abdomen')">Generate AI</button></td>
+</tr>
+
+<tr>
+<td>PT-003</td>
+<td>MRI</td>
+<td>Brain Screening</td>
+<td><button class="ai-btn" onclick="runAI('PT-003','MRI Brain')">Generate AI</button></td>
+</tr>
+
 </table>
 </div>
+
+<div id="result"></div>
+
+<div class="footer">
+© 2026 SYEDZ AI-PACS
+</div>
+
+<script>
+function runAI(id,study){
+ document.getElementById("result").style.display="block";
+ document.getElementById("result").innerHTML =
+ "AI analysis completed for "+id+" — No critical abnormality detected (demo).";
+}
+</script>
 
 </body>
 </html>

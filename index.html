@@ -7,11 +7,10 @@
 body{font-family:Arial;background:#e6ebf0;margin:0}
 .header{background:#2f6fd6;color:white;padding:12px;font-size:22px}
 .toolbar{background:#d5dbe2;padding:8px}
-button{padding:6px;margin:2px}
 table{width:100%;border-collapse:collapse;background:white;margin:10px}
 th{background:#2f6fd6;color:white;padding:6px}
 td{padding:6px;border:1px solid #ddd;text-align:center}
-.ai-btn{background:#28a745;color:white;border:none}
+.ai-btn{background:#28a745;color:white;border:none;padding:5px 10px}
 #result{margin:10px;padding:10px;background:#e7f2ff}
 </style>
 </head>
@@ -27,32 +26,61 @@ td{padding:6px;border:1px solid #ddd;text-align:center}
 
 <table>
 <tr>
-<th>Patient</th><th>Modality</th><th>Study</th><th>AI</th>
+<th>Patient</th>
+<th>Modality</th>
+<th>Study</th>
+<th>AI</th>
 </tr>
+
 <tr>
-<td>PT-001</td><td>XRAY</td><td>Chest PA</td>
+<td>PT-001</td>
+<td>XRAY</td>
+<td>Chest PA</td>
 <td><button class="ai-btn" onclick="sendToAI()">Generate AI</button></td>
 </tr>
 </table>
 
-<div id="result"></div>
+<div id="result" style="display:none;"></div>
 
 <script>
-async function sendToAI(){
-const file=document.getElementById("xrayUpload").files[0];
-if(!file){alert("Upload X-ray first");return;}
+async function sendToAI() {
 
-const formData=new FormData();
-formData.append("file",file);
+    const fileInput = document.getElementById("xrayUpload");
+    const resultBox = document.getElementById("result");
 
-const res=await fetch("https://syedasrar-syedz-ai-backend.hf.space/predict",{
-method:"POST",
-body:formData
-});
+    if (!fileInput.files.length) {
+        alert("Upload X-ray image first");
+        return;
+    }
 
-const data=await res.json();
-document.getElementById("result").innerHTML=
-"<b>AI Result:</b><br>"+JSON.stringify(data,null,2);
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    resultBox.style.display = "block";
+    resultBox.innerHTML = "Analyzing with AI...";
+
+    try {
+        const response = await fetch(
+            "https://syedasrar-syedz-ai-backend.hf.space/predict",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        let output = "<b>AI Pathology Probabilities:</b><br><br>";
+
+        for (let key in data) {
+            output += key + ": " + (data[key] * 100).toFixed(1) + "%<br>";
+        }
+
+        resultBox.innerHTML = output;
+
+    } catch (err) {
+        resultBox.innerHTML = "AI server error — try again.";
+    }
 }
 </script>
 
